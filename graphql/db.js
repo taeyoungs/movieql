@@ -1,58 +1,49 @@
-export let movies = [
-  {
-    id: 0,
-    title: '쥬만지',
-    score: 9,
-  },
-  {
-    id: 1,
-    title: '버즈 오브 프레이',
-    score: 3,
-  },
-  {
-    id: 2,
-    title: '메이즈 러너',
-    score: 7,
-  },
-  {
-    id: 3,
-    title: '소공녀',
-    score: 6,
-  },
-  {
-    id: 4,
-    title: '맘마미아',
-    score: 5,
-  },
-  {
-    id: 5,
-    title: '데자뷰',
-    score: 10,
-  },
-];
+import axios from 'axios';
 
-export const getById = (id) => {
-  const filteredMovie = movies.filter((movie) => movie.id === id);
-  return filteredMovie[0];
+const BASE_URL = 'https://yts.mx/api/v2/';
+const LIST_MOVIES = `${BASE_URL}list_movies.json`;
+const MOVIE_DETAIL = `${BASE_URL}movie_details.json`;
+const SUGGESTION_MOVIES = `${BASE_URL}movie_suggestions.json`;
+
+export const getMovies = async (limit, rating) => {
+  const {
+    data: {
+      data: { movies },
+    },
+  } = await axios.get(LIST_MOVIES, {
+    params: {
+      limit,
+      minimum_rating: rating,
+    },
+  });
+
+  return movies;
 };
 
-export const addMovie = (title, score) => {
-  const newMovie = {
-    id: movies.length,
-    title,
-    score,
-  };
-  movies.push(newMovie);
+export const getMovieDetail = async (id) => {
+  const {
+    data: {
+      data: { movie },
+    },
+  } = await axios.get(MOVIE_DETAIL, {
+    params: {
+      movie_id: id,
+    },
+  });
 
-  return newMovie;
+  return movie;
 };
 
-export const deleteMovie = (id) => {
-  const cleanedMovies = movies.filter((movie) => movie.id !== id);
-  if (movies.length > cleanedMovies.length) {
-    movies = cleanedMovies;
-    return true;
-  } else {
-    return false;
-  }
+export const getSuggestionMovies = async (id) => {
+  const {
+    data: {
+      data: { movies },
+    },
+  } = await axios.get(SUGGESTION_MOVIES, {
+    params: {
+      movie_id: id,
+    },
+  });
+
+  return movies;
 };
